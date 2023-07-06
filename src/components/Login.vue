@@ -13,12 +13,13 @@
                     size="large"
                     id="el-form"
                     v-if="type ==='login'"
+                    :rules="loginDataRule"
                 >
                     <div id="content-input-title">用户登录</div>
-                    <el-form-item label="账号">
+                    <el-form-item label="账号" prop="account">
                         <el-input v-model="loginData.account" />
                     </el-form-item>
-                    <el-form-item label="密码">
+                    <el-form-item label="密码" prop="password">
                         <el-input v-model="loginData.password" type="password" show-password/>
                     </el-form-item>
                     <el-form-item>
@@ -35,18 +36,19 @@
                     size="large"
                     id="el-form"
                     v-if="type ==='register'"
+                    :rules="registerDataRule"
                 >
                     <div id="content-input-title">用户注册</div>
-                    <el-form-item label="昵称">
+                    <el-form-item label="昵称" prop="nickname">
                         <el-input v-model="registerData.nickname" />
                     </el-form-item>
-                    <el-form-item label="账号">
+                    <el-form-item label="账号" prop="account">
                         <el-input v-model="registerData.account" />
                     </el-form-item>
-                    <el-form-item label="密码">
+                    <el-form-item label="密码" prop="password">
                         <el-input v-model="registerData.password" type="password" show-password/>
                     </el-form-item>
-                    <el-form-item label="性别">
+                    <el-form-item label="性别" prop="gender">
                         <el-select v-model="registerData.gender" style="width: 100%" clearable placeholder=" " v-if="type === 'register'">
                             <el-option label="男" value="0"/>
                             <el-option label="女" value="1"/>
@@ -69,14 +71,16 @@ import {ref} from 'vue'
 import axios from "axios";
 import {useStore} from "vuex";
 import {setCookie} from "../expand/utils.js";
+import {useRouter} from "vue-router";
 
 //vuex对象
 const store = useStore()
+const router = useRouter()
 
 //显示页面为登录页面（login）还是注册页面（register） 默认为登录
 const type = ref('login')
 
-function switchForm(newType) {
+const switchForm = (newType) => {
     loginData.value = {
         'account': null,
         'password': null
@@ -95,7 +99,20 @@ const loginData = ref({
     'password': null
 })
 
-async function login() {
+const loginDataRule = {
+    account: {
+        required: true,
+        message: '请输入账号',
+        trigger: 'blur'
+    },
+    password: {
+        required: true,
+        message: '请输入密码',
+        trigger: 'blur'
+    }
+}
+
+const login = async () => {
     let result
     await axios({
         url: '/platform/api/user/login',
@@ -118,7 +135,11 @@ async function login() {
             'role': result.data.role
         })
         setCookie('token', result.data.token, 3600 * 60)
-        alert('登录成功')
+        ElMessage({
+            message: '登录成功',
+            type: 'success',
+        })
+        await router.push('/system')
     } else {
         alert(result.msg)
     }
@@ -131,7 +152,30 @@ const registerData = ref({
     'gender': null
 })
 
-async function register() {
+const registerDataRule = {
+    account: {
+        required: true,
+        message: '请输入账号',
+        trigger: 'blur'
+    },
+    password: {
+        required: true,
+        message: '请输入密码',
+        trigger: 'blur'
+    },
+    nickname: {
+        required: true,
+        message: '请输入昵称',
+        trigger: 'blur'
+    },
+    gender: {
+        required: true,
+        message: '请选择性别',
+        trigger: 'blur'
+    }
+}
+
+const register = async () => {
     let result
     await axios({
         url: '/platform/api/user/register',
@@ -149,7 +193,10 @@ async function register() {
         result = res.data
     })
     if (result.msg === 'OK') {
-        alert('注册成功')
+        ElMessage({
+            message: '注册成功',
+            type: 'success',
+        })
     } else {
         alert(result.msg)
     }
