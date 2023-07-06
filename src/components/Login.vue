@@ -128,6 +128,17 @@ const login = async () => {
         result = res.data
     })
     if (result.msg === 'OK') {
+        switch (result.data.gender) {
+            case 0:
+                result.data.gender = '男'
+                break
+            case 1:
+                result.data.gender = '女'
+                break
+            case -1:
+                result.data.gender = '保密'
+                break
+        }
         store.commit('setUser', {
             'nickname': result.data.nickname,
             'avatar': result.data.avatar,
