@@ -18,6 +18,12 @@ export const store = createStore({
             state.user.avatar = payload.avatar
             state.user.gender = payload.gender
             state.user.role = payload.role
+        },
+        resetUser (state) {
+            state.user.nickname = "unknown"
+            state.user.avatar = "unknown"
+            state.user.gender = "unknown"
+            state.user.role = "unknown"
         }
     },
     plugins: [persistedState({ storage: window.sessionStorage })]
