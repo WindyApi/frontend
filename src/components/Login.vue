@@ -132,7 +132,8 @@ const login = async () => {
             'nickname': result.data.nickname,
             'avatar': result.data.avatar,
             'gender': result.data.gender,
-            'role': result.data.role
+            'role': result.data.role,
+            'createTime': result.data.createTime
         })
         setCookie('token', result.data.token, 3600 * 60)
         ElMessage({
