@@ -27,8 +27,8 @@
                     active-text-color="#1890FFFF"
                     style="height: 94vh"
                 >
-                    <el-menu-item index="home"><el-icon><House /></el-icon>首页</el-menu-item>
-                    <el-menu-item index="user"><el-icon><User /></el-icon>个人中心</el-menu-item>
+                    <el-menu-item index="home" route="/system/home"><el-icon><House /></el-icon>首页</el-menu-item>
+                    <el-menu-item index="user" route="/system/user"><el-icon><User /></el-icon>个人中心</el-menu-item>
                 </el-menu>
             </div>
             <div id="main">
