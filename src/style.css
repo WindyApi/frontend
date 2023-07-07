@@ -14,3 +14,8 @@
     font-family: "站酷仓耳渔阳体-05";
     src: url("/font/TsangerYuYangT_W05_W05.ttf");
 }
+
+a, a:visited {
+    color: black;
+    text-decoration: none;
+}
