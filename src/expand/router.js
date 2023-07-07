@@ -3,6 +3,7 @@ import Login from "../components/Login.vue";
 import System from "../components/System.vue";
 import User from "../components/pages/User.vue";
 import Home from "../components/pages/Home.vue";
+import InterfaceInfo from "../components/pages/InterfaceInfo.vue";
 
 const routes = [
     {
@@ -25,6 +26,10 @@ const routes = [
             {
                 path: 'user',
                 component: User
+            },
+            {
+                path: 'interface_info/:id',
+                component: InterfaceInfo
             }
         ]
     }
