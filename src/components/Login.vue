@@ -115,7 +115,7 @@ const loginDataRule = {
 const login = async () => {
     let result
     await axios({
-        url: '/platform/api/user/login',
+        url: '/platform/api/center/user/login',
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -190,7 +190,7 @@ const registerDataRule = {
 const register = async () => {
     let result
     await axios({
-        url: '/platform/api/user/register',
+        url: '/platform/api/center/user/register',
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
