@@ -21,12 +21,13 @@
             <div id="menu">
                 <el-menu
                     router="true"
-                    default-active="user"
+                    default-active="home"
                     background-color="#F5F5F5FF"
                     text-color="#FFFFFFF"
                     active-text-color="#1890FFFF"
                     style="height: 94vh"
                 >
+                    <el-menu-item index="home"><el-icon><House /></el-icon>首页</el-menu-item>
                     <el-menu-item index="user"><el-icon><User /></el-icon>个人中心</el-menu-item>
                 </el-menu>
             </div>
@@ -40,7 +41,7 @@
 <script setup>
 import {useStore} from "vuex";
 import {useRouter} from "vue-router";
-import {User} from "@element-plus/icons-vue";
+import {House, User} from "@element-plus/icons-vue";
 
 const store = useStore()
 const router = useRouter()
