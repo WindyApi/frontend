@@ -21,20 +21,27 @@
             <div id="interface-card">
                 <p style="color: dodgerblue; width: 99%; font-size: x-large; text-align: left">已订阅接口</p>
                 <el-divider/>
-                <div class="interface-card-line">
-                    <div class="box">
-                        <div class="box-header">随机二次元头像</div>
+                <div class="interface-card-line" v-for="line in userInterfaceRecordData">
+                    <div class="box" v-for="item in line">
+                        <div class="box-header">{{ item.interfaceName }}</div>
                         <div class="box-body">
                             <div style="flex: 1; display: flex; flex-direction: column;">
                                 <div style="font-size: small; color: gray">调用次数</div>
-                                <div style="font-size: x-large">100</div>
+                                <div style="font-size: x-large">{{ item.totalNum }}</div>
                             </div>
                             <div style="flex: 1; display: flex; flex-direction: column;">
                                 <div style="font-size: small; color: gray">剩余</div>
-                                <div style="font-size: x-large">100</div>
+                                <div style="font-size: x-large">{{ item.leftNum }}</div>
                             </div>
                         </div>
-                        <div class="box-footer"><div></div><el-button plain style="position: relative; right: 31px">续订</el-button></div>
+                        <div class="box-footer">
+                            <div style="display: flex; flex-direction: column">
+                                <div style="font-size: 14px">最近一次调用时间</div>
+                                <div style="font-size: 16px" v-if="item.updateTime === null">暂无调用记录</div>
+                                <div style="font-size: 16px" v-else>{{ tsToDate(item.updateTime) }}</div>
+                            </div>
+                            <el-button plain style="position: relative; right: 31px">续订</el-button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -44,11 +51,39 @@
 </template>
 
 <script setup>
+import {onMounted, ref} from 'vue';
 import {useStore} from "vuex";
-import {tsToDate} from "../../expand/utils.js";
+import {getCookie, tsToDate} from "../../expand/utils.js";
 import {Edit, Female, Hide, Loading, Male, User} from "@element-plus/icons-vue";
+import axios from "axios";
 
 const store = useStore()
+
+const convertTo2DArray = (arr) => {
+    const result = [];
+    const cols = 3;
+    const length = arr.length;
+    for (let i = 0; i < length; i += cols) {
+        const row = arr.slice(i, i + cols);
+        result.push(row);
+    }
+    return result;
+}
+
+const userInterfaceRecordData = ref()
+
+onMounted(async () => {
+    await axios({
+        url: '/platform/api/center/user_interface_record',
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'token': getCookie('token')
+        }
+    }).then((res) => {
+        userInterfaceRecordData.value = convertTo2DArray(res.data.data)
+    })
+})
 </script>
 
 <style scoped>
