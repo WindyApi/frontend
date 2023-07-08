@@ -4,6 +4,7 @@ import System from "../components/System.vue";
 import User from "../components/pages/User.vue";
 import Home from "../components/pages/Home.vue";
 import InterfaceInfo from "../components/pages/InterfaceInfo.vue";
+import InterfaceManage from "../components/pages/admin/InterfaceManage.vue";
 
 const routes = [
     {
@@ -30,6 +31,15 @@ const routes = [
             {
                 path: 'interface_info/:id',
                 component: InterfaceInfo
+            },
+            {
+                path: 'manage',
+                children: [
+                    {
+                        path: 'interface',
+                        component: InterfaceManage
+                    }
+                ]
             }
         ]
     }
