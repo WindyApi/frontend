@@ -9,7 +9,9 @@
                 <div style="color: dodgerblue">查看详情</div>
             </div>
         </router-link>
-        <div style="display: flex; justify-content: flex-end; align-items: center; margin-top: 12px"><p style="margin-right: 12px;">共{{ pageSize }}条</p><el-pagination layout="prev, pager, next" :page-size="10" :page-count="pageSize" :current-page="currentPage" @current-change="handleCurrentChange" /></div>
+        <div style="display: flex; justify-content: flex-end; align-items: center; margin-top: 12px"><p style="margin-right: 12px;">共{{
+                total
+            }}条</p><el-pagination layout="prev, pager, next" :page-size="10" :total="total" :current-page="currentPage" @current-change="handleCurrentChange" /></div>
     </div>
 </template>
 
@@ -18,7 +20,7 @@ import {onMounted, ref} from 'vue'
 import axios from "axios";
 import {getCookie} from "../../expand/utils.js";
 
-const pageSize = ref(10)
+const total = ref(10)
 const currentPage = ref(1)
 const interface_info_list = ref([])
 
@@ -47,7 +49,7 @@ onMounted(async () => {
             'token': getCookie('token')
         },
     }).then((res) => {
-        pageSize.value = res.data.data.pageSize
+        total.value = res.data.data.total
     })
     await getAliveInterfaceByPage()
 })
