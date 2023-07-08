@@ -29,16 +29,123 @@
                     </tr>
                     <tr style="display: flex; width: 100%">
                         <td class="table-header">请求头</td>
-                        <td style="flex: 4; user-select: text">{{ interface_doc.requestHeader }}</td>
+                        <td style="flex: 4; user-select: text; white-space: pre" >{{ formatJSON(interface_doc.requestHeader) }}</td>
                         <td class="table-header">响应头</td>
-                        <td style="flex: 4; user-select: text">{{ interface_doc.responseHeader }}</td>
+                        <td style="flex: 4; user-select: text; white-space: pre" >{{ formatJSON(interface_doc.responseHeader).replace("\"", "    \"") }}</td>
                     </tr>
                     <tr style="display: flex; width: 100%">
                         <td class="table-header">请求参数</td>
-                        <td style="flex: 1" v-if="interface_doc.params === null || interface_doc.params === ''">{}</td>
-                        <td style="flex: 1" v-else>{{ interface_doc.params }}</td>
+                        <td style="flex: 1" v-if="interface_doc.params === null || interface_doc.params === '' || interface_doc.params === '{}'">无</td>
+                        <td style="flex: 1; user-select: text; white-space: pre" v-else>{{ formatJSON(interface_doc.params) }}</td>
                     </tr>
                 </table>
+            </div>
+            <el-divider></el-divider>
+            <div id="subscribe">
+                <div class="subscribe-line">
+                    <div class="subscribe-line-title">新人包</div>
+                    <el-divider></el-divider>
+                    <div>
+                        <div style="font-size: small; font-weight: lighter">请求次数</div>
+                        <div style="font-size: larger">20</div>
+                    </div>
+                    <el-divider></el-divider>
+                    <div>
+                        <div style="font-size: small">价格(CNY)</div>
+                        <div style="font-size: larger">0.1元</div>
+                    </div>
+                    <el-divider></el-divider>
+                    <div>
+                        <div style="font-size: small">单次请求价格</div>
+                        <div style="font-size: larger">0.005元</div>
+                    </div>
+                    <el-divider></el-divider>
+                    <div style="display: flex; justify-content: space-between"><div></div><el-button type="success" plain>立即订阅</el-button></div>
+                </div>
+                <div style="width: 42px"></div>
+                <div class="subscribe-line">
+                    <div class="subscribe-line-title">体验包</div>
+                    <el-divider></el-divider>
+                    <div>
+                        <div style="font-size: small; font-weight: lighter">请求次数</div>
+                        <div style="font-size: larger">1000次</div>
+                    </div>
+                    <el-divider></el-divider>
+                    <div>
+                        <div style="font-size: small">价格(CNY)</div>
+                        <div style="font-size: larger">1元</div>
+                    </div>
+                    <el-divider></el-divider>
+                    <div>
+                        <div style="font-size: small">单次请求价格</div>
+                        <div style="font-size: larger">0.001元</div>
+                    </div>
+                    <el-divider></el-divider>
+                    <div style="display: flex; justify-content: space-between"><div></div><el-button type="success" plain>立即订阅</el-button></div>
+                </div>
+                <div style="width: 42px"></div>
+                <div class="subscribe-line">
+                    <div class="subscribe-line-title">特惠包</div>
+                    <el-divider></el-divider>
+                    <div>
+                        <div style="font-size: small; font-weight: lighter">请求次数</div>
+                        <div style="font-size: larger">5000次</div>
+                    </div>
+                    <el-divider></el-divider>
+                    <div>
+                        <div style="font-size: small">价格(CNY)</div>
+                        <div style="font-size: larger">4元</div>
+                    </div>
+                    <el-divider></el-divider>
+                    <div>
+                        <div style="font-size: small">单次请求价格</div>
+                        <div style="font-size: larger">0.0008元</div>
+                    </div>
+                    <el-divider></el-divider>
+                    <div style="display: flex; justify-content: space-between"><div></div><el-button type="success" plain>立即订阅</el-button></div>
+                </div>
+                <div style="width: 42px"></div>
+                <div class="subscribe-line">
+                    <div class="subscribe-line-title">标准包</div>
+                    <el-divider></el-divider>
+                    <div>
+                        <div style="font-size: small; font-weight: lighter">请求次数</div>
+                        <div style="font-size: larger">10000次</div>
+                    </div>
+                    <el-divider></el-divider>
+                    <div>
+                        <div style="font-size: small">价格(CNY)</div>
+                        <div style="font-size: larger">5元</div>
+                    </div>
+                    <el-divider></el-divider>
+                    <div>
+                        <div style="font-size: small">单次请求价格</div>
+                        <div style="font-size: larger">0.0005元</div>
+                    </div>
+                    <el-divider></el-divider>
+                    <div style="display: flex; justify-content: space-between"><div></div><el-button type="success" plain>立即订阅</el-button></div>
+                </div>
+                <div style="width: 42px"></div>
+                <div class="subscribe-line">
+                    <div class="subscribe-line-title">企业包</div>
+                    <el-divider></el-divider>
+                    <div>
+                        <div style="font-size: small; font-weight: lighter">请求次数</div>
+                        <div style="font-size: larger">50000次</div>
+                    </div>
+                    <el-divider></el-divider>
+                    <div>
+                        <div style="font-size: small">价格(CNY)</div>
+                        <div style="font-size: larger">10元</div>
+                    </div>
+                    <el-divider></el-divider>
+                    <div>
+                        <div style="font-size: small">单次请求价格</div>
+                        <div style="font-size: larger">0.0002元</div>
+                    </div>
+                    <el-divider></el-divider>
+                    <div style="display: flex; justify-content: space-between"><div></div><el-button type="success" plain>立即订阅</el-button></div>
+                </div>
             </div>
         </div>
     </el-scrollbar>
@@ -48,9 +155,11 @@
 import {useRoute} from "vue-router";
 import {ref, onMounted} from "vue";
 import axios from "axios";
-import {getCookie, tsToDate} from "../../expand/utils.js";
+import {formatJSON, getCookie, tsToDate} from "../../expand/utils.js";
 
 const route = useRoute()
+
+const test = "{\n\"Content-Type\":\"application/json\"\n}"
 
 const interface_doc = ref({
     id: route.params.id,
@@ -81,6 +190,10 @@ onMounted(async () => {
         interface_doc.value = res.data.data
     })
 })
+
+const subscribeInterface = async () => {
+
+}
 </script>
 
 <style scoped>
@@ -113,4 +226,22 @@ td {
     background-color: rgb(250, 250, 250);
     width: 10%;
 }
+
+#subscribe {
+    display: flex;
+}
+
+.subscribe-line {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    background-color: white;
+}
+
+.subscribe-line-title {
+    font-size: x-large;
+}
+
+
 </style>
