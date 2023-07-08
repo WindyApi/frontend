@@ -39,25 +39,29 @@ export function copyObject(object) {
     return JSON.parse(JSON.stringify(object))
 }
 
-export function formatJSON(jsonString) {
-    let indentLevel = 0;
-    let result = "";
+export function formatJSON(obj) {
+    obj = JSON.stringify(obj)
+    let indent = 4; // 设置缩进的空格数
+    let formattedString = "";
+    let level = 0; // 记录当前层级的缩进空格数
 
-    for (let i = 0; i < jsonString.length; i++) {
-        let char = jsonString[i];
+    for (let i = 0; i < JSON.stringify(obj).length; i++) {
+        let char = obj.charAt(i);
 
-        if (char === '{' || char === '[') {
-            result += char + "\n" + indent(++indentLevel);
-        } else if (char === '}' || char === ']') {
-            result += "\n" + indent(--indentLevel) + char;
-        } else if (char === ',') {
-            result += char + "\n" + indent(indentLevel);
+        if (char === "{") {
+            formattedString += "{\n" + " ".repeat(indent * level);
+            level++;
+        } else if (char === "}") {
+            level--;
+            formattedString += "\n" + " ".repeat(indent * level) + "}";
+        } else if (char === ",") {
+            formattedString += ",\n" + " ".repeat(indent * level);
         } else {
-            result += char;
+            formattedString += char;
         }
     }
-
-    return result;
+    formattedString = formattedString.replaceAll("\\\"", "\"").replace("\"{", "{").replace("}\"", "}")
+    return formattedString.replace("\"", "    \"");
 }
 
 function indent(level) {
