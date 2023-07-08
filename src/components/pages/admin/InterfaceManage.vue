@@ -178,6 +178,18 @@ const openDialog = (data, model) => {
     dialogVisible.value = true
 }
 
+const resetDefaultDialogData = () => {
+    defaultDialogData.value = {
+        name: null,
+        describe: null,
+        method: null,
+        url: null,
+        params: "{}",
+        requestHeader: "{ \"Content-Type\": \"application/json\" }",
+        responseHeader: "{ \"Content-Type\": \"application/json\" }"
+    }
+}
+
 const newInterface = async () => {
     await axios({
         url: '/platform/api/center/interface',
@@ -186,7 +198,7 @@ const newInterface = async () => {
             'Content-Type': 'application/json',
             'token': getCookie('token')
         },
-        data: JSON.stringify(dialogData)
+        data: JSON.stringify(dialogData.value)
     }).then((res) => {
         if (res.data.msg === 'OK') {
             ElMessage({
@@ -194,6 +206,7 @@ const newInterface = async () => {
                 type: 'success',
             })
             dialogVisible.value = false
+            resetDefaultDialogData()
         }
     })
     await getAllInterfaceByPage()
