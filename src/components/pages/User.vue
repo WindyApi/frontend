@@ -36,7 +36,7 @@
                         </div>
                         <div class="box-footer">
                             <div style="display: flex; flex-direction: column">
-                                <div style="font-size: 14px">最近一次调用时间</div>
+                                <div style="font-size: 14px">更新时间</div>
                                 <div style="font-size: 16px" v-if="item.updateTime === null">暂无调用记录</div>
                                 <div style="font-size: 16px" v-else>{{ tsToDate(item.updateTime) }}</div>
                             </div>
