@@ -190,7 +190,7 @@ onMounted(async () => {
     })
 })
 
-const subscribeInterface = async (interfaceInfoId, increase, price) => {
+const subscribeInterface = async (interfaceId, increase, price) => {
     await axios({
         url: '/platform/api/center/user_subscribe_record',
         method: 'POST',
@@ -199,7 +199,7 @@ const subscribeInterface = async (interfaceInfoId, increase, price) => {
             'token': getCookie('token')
         },
         data: JSON.stringify({
-            interfaceInfoId: interfaceInfoId,
+            interfaceId: interfaceId,
             increase: increase,
             price: price
         })
