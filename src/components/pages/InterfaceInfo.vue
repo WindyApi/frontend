@@ -60,7 +60,7 @@
                         <div style="font-size: larger">0.005元</div>
                     </div>
                     <el-divider></el-divider>
-                    <div style="display: flex; justify-content: space-between"><div></div><el-button type="success" plain>立即订阅</el-button></div>
+                    <div style="display: flex; justify-content: space-between"><div></div><el-button type="success" plain @click="subscribeInterface(route.params.id, 20, 10)">立即订阅</el-button></div>
                 </div>
                 <div style="width: 42px"></div>
                 <div class="subscribe-line">
@@ -81,7 +81,7 @@
                         <div style="font-size: larger">0.001元</div>
                     </div>
                     <el-divider></el-divider>
-                    <div style="display: flex; justify-content: space-between"><div></div><el-button type="success" plain>立即订阅</el-button></div>
+                    <div style="display: flex; justify-content: space-between"><div></div><el-button type="success" plain @click="subscribeInterface(route.params.id, 1000, 100)">立即订阅</el-button></div>
                 </div>
                 <div style="width: 42px"></div>
                 <div class="subscribe-line">
@@ -102,7 +102,7 @@
                         <div style="font-size: larger">0.0008元</div>
                     </div>
                     <el-divider></el-divider>
-                    <div style="display: flex; justify-content: space-between"><div></div><el-button type="success" plain>立即订阅</el-button></div>
+                    <div style="display: flex; justify-content: space-between"><div></div><el-button type="success" plain @click="subscribeInterface(route.params.id, 5000, 400)">立即订阅</el-button></div>
                 </div>
                 <div style="width: 42px"></div>
                 <div class="subscribe-line">
@@ -123,7 +123,7 @@
                         <div style="font-size: larger">0.0005元</div>
                     </div>
                     <el-divider></el-divider>
-                    <div style="display: flex; justify-content: space-between"><div></div><el-button type="success" plain>立即订阅</el-button></div>
+                    <div style="display: flex; justify-content: space-between"><div></div><el-button type="success" plain @click="subscribeInterface(route.params.id, 10000, 500)">立即订阅</el-button></div>
                 </div>
                 <div style="width: 42px"></div>
                 <div class="subscribe-line">
@@ -144,7 +144,7 @@
                         <div style="font-size: larger">0.0002元</div>
                     </div>
                     <el-divider></el-divider>
-                    <div style="display: flex; justify-content: space-between"><div></div><el-button type="success" plain>立即订阅</el-button></div>
+                    <div style="display: flex; justify-content: space-between"><div></div><el-button type="success" plain @click="subscribeInterface(route.params.id, 50000, 1000)">立即订阅</el-button></div>
                 </div>
             </div>
         </div>
@@ -156,10 +156,9 @@ import {useRoute} from "vue-router";
 import {ref, onMounted} from "vue";
 import axios from "axios";
 import {formatJSON, getCookie, tsToDate} from "../../expand/utils.js";
+import {ElMessage} from "element-plus";
 
 const route = useRoute()
-
-const test = "{\n\"Content-Type\":\"application/json\"\n}"
 
 const interface_doc = ref({
     id: route.params.id,
@@ -191,8 +190,27 @@ onMounted(async () => {
     })
 })
 
-const subscribeInterface = async () => {
-
+const subscribeInterface = async (interfaceInfoId, increase, price) => {
+    await axios({
+        url: '/platform/api/center/user_subscribe_record',
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'token': getCookie('token')
+        },
+        data: JSON.stringify({
+            interfaceInfoId: interfaceInfoId,
+            increase: increase,
+            price: price
+        })
+    }).then((res) => {
+        if (res.data.msg === 'OK') {
+            ElMessage({
+                message: '订阅成功',
+                type: 'success',
+            })
+        }
+    })
 }
 </script>
 

@@ -40,7 +40,7 @@
                                 <div style="font-size: 16px" v-if="item.updateTime === null">暂无调用记录</div>
                                 <div style="font-size: 16px" v-else>{{ tsToDate(item.updateTime) }}</div>
                             </div>
-                            <el-button plain style="position: relative; right: 31px">续订</el-button>
+                            <el-button plain style="position: relative; right: 31px" @click="router.push('/system/interface_info/' + item.interfaceId)">续订</el-button>
                         </div>
                     </div>
                 </div>
@@ -56,8 +56,10 @@ import {useStore} from "vuex";
 import {getCookie, tsToDate} from "../../expand/utils.js";
 import {Edit, Female, Hide, Loading, Male, User} from "@element-plus/icons-vue";
 import axios from "axios";
+import {useRouter} from "vue-router";
 
 const store = useStore()
+const router = useRouter()
 
 const convertTo2DArray = (arr) => {
     const result = [];
