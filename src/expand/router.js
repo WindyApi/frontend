@@ -5,6 +5,7 @@ import User from "../components/pages/User.vue";
 import Home from "../components/pages/Home.vue";
 import InterfaceInfo from "../components/pages/InterfaceInfo.vue";
 import InterfaceManage from "../components/pages/admin/InterfaceManage.vue";
+import Document from "../components/pages/Document.vue";
 
 const routes = [
     {
@@ -31,6 +32,10 @@ const routes = [
             {
                 path: 'interface_info/:id',
                 component: InterfaceInfo
+            },
+            {
+                path: 'document',
+                component: Document
             },
             {
                 path: 'manage',
