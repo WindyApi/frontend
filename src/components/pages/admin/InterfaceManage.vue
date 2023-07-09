@@ -53,19 +53,20 @@
                         <div style="user-select: text">{{ scope.row.url }}</div>
                     </template>
                 </el-table-column>
-                <el-table-column label="请求参数" width="240" >
+                <el-table-column label="请求参数" width="560" >
                     <template #default="scope">
-                        <div style="user-select: text">{{ scope.row.params }}</div>
+                        <td v-if="scope.row.params === null || scope.row.params === '' || scope.row.params === '{}'">无</td>
+                        <td style="user-select: text; white-space: pre" v-else>{{ formatJSON(scope.row.params) }}</td>
                     </template>
                 </el-table-column>
                 <el-table-column label="请求头" width="320" >
                     <template #default="scope">
-                        <div style="user-select: text">{{ scope.row.requestHeader }}</div>
+                        <div style="user-select: text; white-space: pre">{{ formatJSON(scope.row.requestHeader) }}</div>
                     </template>
                 </el-table-column>
                 <el-table-column label="响应头" width="320" >
                     <template #default="scope">
-                        <div style="user-select: text">{{ scope.row.responseHeader }}</div>
+                        <div style="user-select: text; white-space: pre">{{ formatJSON(scope.row.responseHeader) }}</div>
                     </template>
                 </el-table-column>
                 <el-table-column prop="nickname" label="创建人" width="120" />
@@ -102,7 +103,7 @@
 <script setup>
 import {onMounted, ref} from "vue";
 import axios from "axios";
-import {getCookie, tsToDate} from "../../../expand/utils.js";
+import {formatJSON, getCookie, tsToDate} from "../../../expand/utils.js";
 import {ElMessage} from "element-plus";
 
 const total = ref(0)

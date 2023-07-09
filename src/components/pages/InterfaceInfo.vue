@@ -31,7 +31,7 @@
                         <td class="table-header">请求头</td>
                         <td style="flex: 4; user-select: text; white-space: pre" >{{ formatJSON(interface_doc.requestHeader) }}</td>
                         <td class="table-header">响应头</td>
-                        <td style="flex: 4; user-select: text; white-space: pre" >{{ formatJSON(interface_doc.responseHeader).replace("\"", "    \"") }}</td>
+                        <td style="flex: 4; user-select: text; white-space: pre" >{{ formatJSON(interface_doc.responseHeader) }}</td>
                     </tr>
                     <tr style="display: flex; width: 100%">
                         <td class="table-header">请求参数</td>
