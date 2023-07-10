@@ -220,6 +220,7 @@ const register = async () => {
             message: '注册成功',
             type: 'success',
         })
+        type.value = 'login'
     } else {
         alert(result.msg)
     }
