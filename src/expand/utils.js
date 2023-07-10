@@ -78,3 +78,21 @@ export function prismCode() {
     document.body.appendChild(script);
     document.body.removeChild(script)
 }
+
+// 比较两个对象是否相等
+export function isEqual(objA, objB) {
+    const keysA = Object.keys(objA);
+    const keysB = Object.keys(objB);
+
+    if (keysA.length !== keysB.length) {
+        return false;
+    }
+
+    for (const key of keysA) {
+        if (objA[key] !== objB[key]) {
+            return false;
+        }
+    }
+
+    return true;
+}
