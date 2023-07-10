@@ -22,6 +22,13 @@
                     <el-form-item label="密码" prop="password">
                         <el-input v-model="loginData.password" type="password" show-password/>
                     </el-form-item>
+                    <el-form-item label="验证码" prop="password">
+                        <div style="display: flex; width: 100%">
+                            <img :src="captcha.captchaBase64Data" alt="">
+                            <div style="flex: 1"></div>
+                            <el-input v-model="loginData.captcha" style="flex: 5"/>
+                        </div>
+                    </el-form-item>
                     <el-form-item>
                         <el-button type="primary" @click="login" style="margin: 0 auto">登&nbsp;录</el-button>
                     </el-form-item>
@@ -58,6 +65,13 @@
                             <el-option label="保密" value="-1"/>
                         </el-select>
                     </el-form-item>
+                    <el-form-item label="验证码" prop="captcha">
+                        <div style="display: flex; width: 100%">
+                            <img :src="captcha.captchaBase64Data" alt="">
+                            <div style="flex: 1"></div>
+                            <el-input v-model="registerData.captcha" style="flex: 5"/>
+                        </div>
+                    </el-form-item>
                     <el-form-item>
                         <el-button type="primary" @click="register" style="margin: 0 auto">注&nbsp;册</el-button>
                     </el-form-item>
@@ -70,7 +84,7 @@
 </template>
 
 <script setup>
-import {ref} from 'vue'
+import {ref, onMounted} from 'vue'
 import axios from "axios";
 import {useStore} from "vuex";
 import {setCookie} from "../expand/utils.js";
@@ -83,7 +97,30 @@ const router = useRouter()
 //显示页面为登录页面（login）还是注册页面（register） 默认为登录
 const type = ref('login')
 
-const switchForm = (newType) => {
+const captcha = ref({
+    identity: null,
+    captchaBase64Data: null
+})
+
+const getCaptcha = async () => {
+    await axios({
+        url: '/platform/api/center/user/captcha',
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).then((res) => {
+        captcha.value.identity = res.data.data.identity
+        captcha.value.captchaBase64Data = res.data.data.captchaBase64Data
+    })
+}
+
+onMounted(async () => {
+    await getCaptcha()
+})
+
+const switchForm = async (newType) => {
+    await getCaptcha()
     loginData.value = {
         'account': null,
         'password': null
@@ -100,7 +137,8 @@ const switchForm = (newType) => {
 
 const loginData = ref({
     'account': null,
-    'password': null
+    'password': null,
+    'captcha': null
 })
 
 const loginDataRule = {
@@ -112,6 +150,11 @@ const loginDataRule = {
     password: {
         required: true,
         message: '请输入密码',
+        trigger: 'blur'
+    },
+    captcha: {
+        required: true,
+        message: '请输入验证码',
         trigger: 'blur'
     }
 }
@@ -126,7 +169,9 @@ const login = async () => {
         },
         data: JSON.stringify({
             account: loginData.value.account,
-            password: loginData.value.password
+            password: loginData.value.password,
+            identity: captcha.value.identity,
+            captcha: loginData.value.captcha
         })
     }).then((res) => {
         result = res.data
@@ -166,7 +211,8 @@ const registerData = ref({
     'password': null,
     'email': null,
     'nickname': null,
-    'gender': null
+    'gender': null,
+    'captcha': null
 })
 
 const registerDataRule = {
@@ -194,6 +240,11 @@ const registerDataRule = {
         required: true,
         message: '请选择性别',
         trigger: 'blur'
+    },
+    captcha: {
+        required: true,
+        message: '请输入验证码',
+        trigger: 'blur'
     }
 }
 
@@ -211,6 +262,8 @@ const register = async () => {
             email: registerData.value.email,
             nickname: registerData.value.nickname,
             gender: registerData.value.gender,
+            identity: captcha.value.identity,
+            captcha: registerData.value.captcha
         })
     }).then((res) => {
         result = res.data
