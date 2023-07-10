@@ -48,6 +48,9 @@
                     <el-form-item label="密码" prop="password">
                         <el-input v-model="registerData.password" type="password" show-password/>
                     </el-form-item>
+                    <el-form-item label="邮箱" prop="email">
+                        <el-input v-model="registerData.email" />
+                    </el-form-item>
                     <el-form-item label="性别" prop="gender">
                         <el-select v-model="registerData.gender" style="width: 100%" clearable placeholder=" " v-if="type === 'register'">
                             <el-option label="男" value="0"/>
@@ -88,6 +91,7 @@ const switchForm = (newType) => {
     registerData.value = {
         'account': null,
         'password': null,
+        'email': null,
         'nickname': null,
         'gender': null
     }
@@ -160,6 +164,7 @@ const login = async () => {
 const registerData = ref({
     'account': null,
     'password': null,
+    'email': null,
     'nickname': null,
     'gender': null
 })
@@ -173,6 +178,11 @@ const registerDataRule = {
     password: {
         required: true,
         message: '请输入密码',
+        trigger: 'blur'
+    },
+    email: {
+        required: true,
+        message: '请输入邮箱',
         trigger: 'blur'
     },
     nickname: {
@@ -198,6 +208,7 @@ const register = async () => {
         data: JSON.stringify({
             account: registerData.value.account,
             password: registerData.value.password,
+            email: registerData.value.email,
             nickname: registerData.value.nickname,
             gender: registerData.value.gender,
         })
