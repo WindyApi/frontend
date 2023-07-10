@@ -53,6 +53,11 @@ onMounted(async () => {
     })
     await getAliveInterfaceByPage()
 })
+
+const handleCurrentChange = async (targetPage) => {
+    currentPage.value = targetPage
+    await getAliveInterfaceByPage()
+}
 </script>
 
 <style scoped>

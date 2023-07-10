@@ -95,7 +95,7 @@
                     </template>
                 </el-table-column>
             </el-table>
-            <div style="display: flex; justify-content: flex-end; align-items: center; margin-top: 12px"><p style="margin-right: 12px;">共{{ total }}条</p><el-pagination layout="prev, pager, next" :page-size="5" :total="total" :current-page="currentPage" @current-change="getAllInterfaceByPage" /></div>
+            <div style="display: flex; justify-content: flex-end; align-items: center; margin-top: 12px"><p style="margin-right: 12px;">共{{ total }}条</p><el-pagination layout="prev, pager, next" :page-size="5" :total="total" :current-page="currentPage" @current-change="handleCurrentChange" /></div>
         </el-scrollbar>
     </div>
 </template>
@@ -139,6 +139,11 @@ onMounted(async () => {
     })
     await getAllInterfaceByPage()
 })
+
+const handleCurrentChange = async (targetPage) => {
+    currentPage.value = targetPage
+    await getAllInterfaceByPage()
+}
 
 const setInterfaceStatus = async (id, status) => {
     await axios({
