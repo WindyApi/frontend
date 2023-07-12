@@ -53,7 +53,7 @@
                         <el-input v-model="registerData.account" />
                     </el-form-item>
                     <el-form-item label="密码" prop="password">
-                        <el-input v-model="registerData.password" type="password" show-password/>
+                        <el-input v-model="registerData.password"/>
                     </el-form-item>
                     <el-form-item label="邮箱" prop="email">
                         <el-input v-model="registerData.email" />
@@ -187,6 +187,9 @@ const login = async () => {
             case -1:
                 result.data.gender = '保密'
                 break
+        }
+        if (result.data.avatar === null || result.data.avatar === '') {
+            result.data.avatar = "/images/default-avatar.jpg"
         }
         store.commit('setUser', {
             'nickname': result.data.nickname,

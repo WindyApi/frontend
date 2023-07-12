@@ -27,6 +27,9 @@ export const store = createStore({
             state.user.gender = "unknown"
             state.user.role = "unknown"
             state.user.createTime = "unknown"
+        },
+        setAvatar(state, payload) {
+            state.user.avatar = payload.avatar
         }
     },
     plugins: [persistedState({ storage: window.sessionStorage })]

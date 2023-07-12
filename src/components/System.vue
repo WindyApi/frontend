@@ -7,7 +7,7 @@
             </div>
             <el-dropdown>
                 <span class="el-dropdown-link" style="display: flex; align-items: center">
-                    <img src="/images/default-avatar.jpg" alt="" style="width: 4vh; border-radius: 50px; margin-right: 8px">{{ store.state.user.nickname }}
+                    <img :src="store.state.user.avatar" alt="" style="width: 4vh; height: 4vh; object-fit: contain; border-radius: 50px; margin-right: 8px">{{ store.state.user.nickname }}
                 </span>
                 <template #dropdown>
                     <el-dropdown-menu>
