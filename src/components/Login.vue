@@ -24,7 +24,7 @@
                     </el-form-item>
                     <el-form-item label="验证码" prop="password">
                         <div style="display: flex; width: 100%">
-                            <img :src="captcha.captchaBase64Data" alt="">
+                            <img :src="captcha.captchaBase64Data" alt="" @click="getCaptcha">
                             <div style="flex: 1"></div>
                             <el-input v-model="loginData.captcha" style="flex: 5"/>
                         </div>
@@ -67,7 +67,7 @@
                     </el-form-item>
                     <el-form-item label="验证码" prop="captcha">
                         <div style="display: flex; width: 100%">
-                            <img :src="captcha.captchaBase64Data" alt="">
+                            <img :src="captcha.captchaBase64Data" alt="" @click="getCaptcha">
                             <div style="flex: 1"></div>
                             <el-input v-model="registerData.captcha" style="flex: 5"/>
                         </div>
@@ -204,8 +204,12 @@ const login = async () => {
             type: 'success',
         })
         await router.push('/system')
+    } else if (result.msg === '验证码不存在' || result.msg === '验证码错误') {
+        ElMessage.error("验证码错误")
+        await getCaptcha()
+        loginData.value.captcha = null
     } else {
-        alert(result.msg)
+        ElMessage.error("系统出错")
     }
 }
 
@@ -277,8 +281,12 @@ const register = async () => {
             type: 'success',
         })
         type.value = 'login'
+    } else if (result.msg === '验证码不存在' || result.msg === '验证码错误') {
+        ElMessage.error("验证码错误")
+        await getCaptcha()
+        loginData.value.captcha = null
     } else {
-        alert(result.msg)
+        ElMessage.error("系统出错")
     }
 }
 </script>
