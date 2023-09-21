@@ -208,8 +208,18 @@ const login = async () => {
         ElMessage.error("验证码错误")
         await getCaptcha()
         loginData.value.captcha = null
+    } else if (result.msg === '密码错误') {
+        ElMessage.error("密码错误")
+        await getCaptcha()
+        loginData.value.password = null
+        loginData.value.captcha = null
+    } else if (result.msg === '用户不存在或已被封号') {
+        ElMessage.error("用户不存在或已被封号")
+        await getCaptcha()
     } else {
         ElMessage.error("系统出错")
+        await getCaptcha()
+        loginData.value.captcha = null
     }
 }
 
