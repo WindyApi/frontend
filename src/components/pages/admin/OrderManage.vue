@@ -8,8 +8,8 @@
             <el-button type="success" style="margin: 0 32px" @click="getAllOrder(currentPage, status)">筛选</el-button>
             <el-button type="primary" @click="getAllOrder(currentPage, status=null)">重置</el-button>
             <div style="display: flex; justify-content: flex-end; align-items: center">
-                <p style="margin: 0 32px;">共{{ total }}条</p>
-                <el-pagination layout="prev, pager, next" :page-size="10" :total="total" :current-page="currentPage" @current-change="handleCurrentChange" />
+                <p style="margin: 0 32px;">待处理工单&nbsp;{{ total.waitTotal }}&nbsp;条 已处理工单&nbsp;{{ total.endTotal }}&nbsp;条</p>
+                <el-pagination layout="prev, pager, next" :page-size="10" :total="total.all" :current-page="currentPage" @current-change="currentPageChange" />
             </div>
         </div>
         <el-divider></el-divider>
@@ -80,12 +80,17 @@ import axios from "axios";
 import {getCookie, tsToDate} from "../../../expand/utils.js";
 import {ElMessage} from "element-plus";
 
-const total = ref(1)
+const total = ref({
+    all: 0,
+    waitTotal: 0,
+    endTotal: 0
+})
 const currentPage = ref(1)
 const status = ref(null)
 const order_list = ref([])
 
 const getAllOrder = async (pageNum, status) => {
+    console.log(pageNum)
     await axios({
         url: '/platform/api/center/order/all',
         method: 'GET',
@@ -111,10 +116,17 @@ onMounted(async () => {
             'token': getCookie('token')
         }
     }).then((res) => {
-        total.value = res.data.data.total
+        total.value.waitTotal = res.data.data.waitTotal
+        total.value.endTotal = res.data.data.endTotal
+        total.value.all = res.data.data.waitTotal + res.data.data.endTotal
     })
     await getAllOrder(currentPage.value)
 })
+
+const currentPageChange = async (targetPage) => {
+    currentPage.value = targetPage
+    await getAllOrder(targetPage, null)
+}
 
 const dialogVisible = ref(false)
 const dialogData = ref({})

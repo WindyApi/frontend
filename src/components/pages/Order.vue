@@ -4,7 +4,7 @@
             <el-button type="success" size="large" @click="openDialog">创建工单</el-button>
             <div style="display: flex; justify-content: flex-end; align-items: center">
                 <p style="margin-right: 12px;">共{{ total }}条</p>
-                <el-pagination layout="prev, pager, next" :page-size="10" :total="total" :current-page="currentPage" @current-change="handleCurrentChange" />
+                <el-pagination layout="prev, pager, next" :page-size="10" :total="total" :current-page="currentPage" @current-change="currentPageChange" />
             </div>
             <el-dialog
                 v-model="dialogVisible"
@@ -146,6 +146,11 @@ onMounted(async () => {
     })
     await getAllOrder(currentPage.value)
 })
+
+const currentPageChange = async (targetPage) => {
+    currentPage.value = targetPage
+    await getAllOrder(targetPage)
+}
 
 const dialogVisible = ref(false)
 const dialogData = ref({})
