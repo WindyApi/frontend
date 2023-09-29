@@ -7,8 +7,10 @@ import Home from "../components/pages/Home.vue";
 import InterfaceInfo from "../components/pages/InterfaceInfo.vue";
 import InterfaceManage from "../components/pages/admin/InterfaceManage.vue";
 import Document from "../components/pages/Document.vue";
+import Order from "../components/pages/Order.vue";
 import {ElMessage} from "element-plus";
 import {isEqual} from "./utils.js";
+import OrderManage from "../components/pages/admin/OrderManage.vue";
 
 const routes = [
     {
@@ -41,11 +43,19 @@ const routes = [
                 component: Document
             },
             {
+                path: 'order',
+                component: Order
+            },
+            {
                 path: 'manage',
                 children: [
                     {
                         path: 'interface',
                         component: InterfaceManage
+                    },
+                    {
+                        path: 'order',
+                        component: OrderManage
                     }
                 ]
             }

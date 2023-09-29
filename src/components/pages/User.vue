@@ -60,36 +60,37 @@
                 <div style="margin-top: 12px;">生活就像一本书，你要翻过去才能知道结局</div>
             </div>
         </div>
-        <div style="flex: 5; display: flex; flex-direction: column">
-            <div id="interface-card">
-                <p style="color: dodgerblue; width: 99%; font-size: x-large; text-align: left">已订阅接口</p>
-                <el-divider/>
-                <div class="interface-card-line" v-for="line in userInterfaceRecordData">
-                    <div class="box" v-for="item in line">
-                        <div class="box-header">{{ item.interfaceName }}</div>
-                        <div class="box-body">
-                            <div style="flex: 1; display: flex; flex-direction: column;">
-                                <div style="font-size: small; color: gray">调用次数</div>
-                                <div style="font-size: x-large">{{ item.totalNum }}</div>
+        <el-scrollbar style="flex: 5">
+            <div style="display: flex; flex-direction: column">
+                <div id="interface-card">
+                    <p style="color: dodgerblue; width: 99%; font-size: x-large; text-align: left">已订阅接口</p>
+                    <el-divider/>
+                    <div class="interface-card-line" v-for="line in userInterfaceRecordData">
+                        <div class="box" v-for="item in line">
+                            <div class="box-header">{{ item.interfaceName }}</div>
+                            <div class="box-body">
+                                <div style="flex: 1; display: flex; flex-direction: column;">
+                                    <div style="font-size: small; color: gray">调用次数</div>
+                                    <div style="font-size: x-large">{{ item.totalNum }}</div>
+                                </div>
+                                <div style="flex: 1; display: flex; flex-direction: column;">
+                                    <div style="font-size: small; color: gray">剩余</div>
+                                    <div style="font-size: x-large">{{ item.leftNum }}</div>
+                                </div>
                             </div>
-                            <div style="flex: 1; display: flex; flex-direction: column;">
-                                <div style="font-size: small; color: gray">剩余</div>
-                                <div style="font-size: x-large">{{ item.leftNum }}</div>
+                            <div class="box-footer">
+                                <div style="display: flex; flex-direction: column">
+                                    <div style="font-size: 14px">更新时间</div>
+                                    <div style="font-size: 16px" v-if="item.updateTime === null">暂无调用记录</div>
+                                    <div style="font-size: 16px" v-else>{{ tsToDate(item.updateTime) }}</div>
+                                </div>
+                                <el-button plain style="position: relative; right: 31px" @click="router.push('/system/interface_info/' + item.interfaceId)">续订</el-button>
                             </div>
-                        </div>
-                        <div class="box-footer">
-                            <div style="display: flex; flex-direction: column">
-                                <div style="font-size: 14px">更新时间</div>
-                                <div style="font-size: 16px" v-if="item.updateTime === null">暂无调用记录</div>
-                                <div style="font-size: 16px" v-else>{{ tsToDate(item.updateTime) }}</div>
-                            </div>
-                            <el-button plain style="position: relative; right: 31px" @click="router.push('/system/interface_info/' + item.interfaceId)">续订</el-button>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-
+        </el-scrollbar>
     </div>
 </template>
 

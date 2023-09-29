@@ -30,9 +30,11 @@
                     <el-menu-item index="home" route="/system/home"><el-icon><House /></el-icon>首页</el-menu-item>
                     <el-menu-item index="user" route="/system/user"><el-icon><User /></el-icon>个人中心</el-menu-item>
                     <el-menu-item index="document" route="/system/document"><el-icon><DocumentCopy /></el-icon>使用手册</el-menu-item>
+                    <el-menu-item index="order" route="/system/order"><el-icon><Edit /></el-icon>我的工单</el-menu-item>
                     <el-sub-menu index="manage" v-if="store.state.user.role === 'admin'">
                         <template #title><el-icon><ElementPlus /></el-icon>管理页</template>
                         <el-menu-item index="manage-interface" route="/system/manage/interface"><el-icon><Operation /></el-icon>接口管理</el-menu-item>
+                        <el-menu-item index="manage-order" route="/system/manage/order"><el-icon><Message /></el-icon>工单管理</el-menu-item>
                     </el-sub-menu>
                 </el-menu>
             </div>
@@ -46,7 +48,7 @@
 <script setup>
 import {useStore} from "vuex";
 import {useRouter} from "vue-router";
-import {DocumentCopy, ElementPlus, House, Operation, User} from "@element-plus/icons-vue";
+import {DocumentCopy, Edit, ElementPlus, House, Message, Operation, User} from "@element-plus/icons-vue";
 
 const store = useStore()
 const router = useRouter()
