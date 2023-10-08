@@ -112,38 +112,19 @@
 import {onMounted, ref} from 'vue';
 import axios from "axios";
 import {getCookie, tsToDate} from "../../expand/utils.js";
+import {getRequest, postRequest} from "../../expand/request.js";
+import {ElMessage} from "element-plus";
 
 const total = ref(1)
 const currentPage = ref(1)
 const order_list = ref([])
 
 const getAllOrder = async (pageNum) => {
-    await axios({
-        url: '/platform/api/center/order',
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'token': getCookie('token')
-        },
-        params: {
-            pageNum: pageNum
-        }
-    }).then((res) => {
-        order_list.value = res.data.data
-    })
+    order_list.value = (await getRequest('/platform/api/center/order', {pageNum: pageNum})).data
 }
 
 onMounted(async () => {
-    await axios({
-        url: '/platform/api/center/order',
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'token': getCookie('token')
-        },
-    }).then((res) => {
-        total.value = res.data.data.total
-    })
+    total.value = (await getRequest('/platform/api/center/order', undefined)).data.total
     await getAllOrder(currentPage.value)
 })
 
@@ -159,19 +140,7 @@ const getAllInterfaceInfo = async () => {
     let interface_info_list = [{ id: -1, name: '非特定接口'}]
     let index = 1
     do {
-        await axios({
-            url: '/platform/api/center/interface/online',
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'token': getCookie('token')
-            },
-            params: {
-                pageNum: index
-            }
-        }).then((res) => {
-            interface_info_list.push(...res.data.data)
-        })
+        interface_info_list.push(...(await getRequest('/platform/api/center/interface/online', {pageNum: index})).data)
         index++
     } while (index <= Math.floor(total / 10))
     dialogData.value.interface_info_list = interface_info_list
@@ -186,29 +155,21 @@ const openDialog = async () => {
 }
 
 const submitOrder = async () => {
-    await axios({
-        url: '/platform/api/center/order',
-        method: 'post',
-        headers: {
-            'Content-Type': 'application/json',
-            'token': getCookie('token')
-        },
-        data: JSON.stringify({
-            interfaceId: dialogData.value.interfaceId,
-            level: dialogData.value.level,
-            submitMessage: dialogData.value.submitMessage
-        })
-    }).then((res) => {
-        if (res.data.msg === 'OK') {
-            ElMessage({
-                message: '提交成功,管理员将会通过邮件与您联系',
-                type: 'success'
-            })
-            dialogVisible.value = false
-        } else {
-            ElMessage.error('系统异常,请直接联系管理员')
-        }
+    const response = await postRequest('/platform/api/center/order', {
+        interfaceId: dialogData.value.interfaceId,
+        level: dialogData.value.level,
+        submitMessage: dialogData.value.submitMessage
     })
+    if (response.msg === 'OK') {
+        ElMessage({
+            message: '提交成功,管理员将会通过邮件与您联系',
+            type: 'success'
+        })
+        dialogVisible.value = false
+        await getAllOrder(currentPage.value)
+    } else {
+        ElMessage.error('系统异常,请直接联系管理员')
+    }
 }
 
 const detailVisible = ref(false)

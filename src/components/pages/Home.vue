@@ -17,40 +17,18 @@
 
 <script setup>
 import {onMounted, ref} from 'vue'
-import axios from "axios";
-import {getCookie} from "../../expand/utils.js";
+import {getRequest} from "../../expand/request.js";
 
 const total = ref(10)
 const currentPage = ref(1)
 const interface_info_list = ref([])
 
 const getAliveInterfaceByPage = async () => {
-    await axios({
-        url: '/platform/api/center/interface/online',
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'token': getCookie('token')
-        },
-        params: {
-            pageNum: currentPage.value
-        }
-    }).then((res) => {
-        interface_info_list.value = res.data.data
-    })
+    interface_info_list.value = (await getRequest('/platform/api/center/interface/online', {pageNum: currentPage.value})).data
 }
 
 onMounted(async () => {
-    await axios({
-        url: '/platform/api/center/interface/online',
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'token': getCookie('token')
-        },
-    }).then((res) => {
-        total.value = res.data.data.total
-    })
+    total.value = (await getRequest('/platform/api/center/interface/online', null)).data.total
     await getAliveInterfaceByPage()
 })
 

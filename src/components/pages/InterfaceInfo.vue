@@ -154,9 +154,9 @@
 <script setup>
 import {useRoute} from "vue-router";
 import {ref, onMounted} from "vue";
-import axios from "axios";
-import {formatJSON, getCookie, tsToDate} from "../../expand/utils.js";
+import {formatJSON, tsToDate} from "../../expand/utils.js";
 import {ElMessage} from "element-plus";
+import {getRequest, postRequest} from "../../expand/request.js";
 
 const route = useRoute()
 
@@ -175,42 +175,23 @@ const interface_doc = ref({
 })
 
 onMounted(async () => {
-    await axios({
-        url: '/platform/api/center/interface',
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'token': getCookie('token')
-        },
-        params: {
-            id: route.params.id
-        }
-    }).then((res) => {
-        interface_doc.value = res.data.data
-    })
+    interface_doc.value = (await getRequest('/platform/api/center/interface', {id: route.params.id})).data
 })
 
 const subscribeInterface = async (interfaceId, increase, price) => {
-    await axios({
-        url: '/platform/api/center/user_subscribe_record',
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'token': getCookie('token')
-        },
-        data: JSON.stringify({
-            interfaceId: interfaceId,
-            increase: increase,
-            price: price
-        })
-    }).then((res) => {
-        if (res.data.msg === 'OK') {
-            ElMessage({
-                message: '订阅成功',
-                type: 'success',
-            })
-        }
+    const response = await postRequest('/platform/api/center/user_subscribe_record', {
+        interfaceId: interfaceId,
+        increase: increase,
+        price: price
     })
+    if (response.msg === 'OK') {
+        ElMessage({
+            message: '订阅成功',
+            type: 'success',
+        })
+    } else {
+        ElMessage.error(response.msg)
+    }
 }
 </script>
 

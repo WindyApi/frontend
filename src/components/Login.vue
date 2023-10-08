@@ -85,10 +85,11 @@
 
 <script setup>
 import {ref, onMounted} from 'vue'
-import axios from "axios";
 import {useStore} from "vuex";
 import {setCookie} from "../expand/utils.js";
 import {useRouter} from "vue-router";
+import {getRequest, postRequest} from "../expand/request.js";
+import {ElMessage} from "element-plus";
 
 //vuex对象
 const store = useStore()
@@ -103,16 +104,9 @@ const captcha = ref({
 })
 
 const getCaptcha = async () => {
-    await axios({
-        url: '/platform/api/center/user/captcha',
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    }).then((res) => {
-        captcha.value.identity = res.data.data.identity
-        captcha.value.captchaBase64Data = res.data.data.captchaBase64Data
-    })
+    const result = await getRequest('/platform/api/center/user/captcha', null)
+    captcha.value.identity = result.data.identity
+    captcha.value.captchaBase64Data = result.data.captchaBase64Data
 }
 
 onMounted(async () => {
@@ -160,21 +154,11 @@ const loginDataRule = {
 }
 
 const login = async () => {
-    let result
-    await axios({
-        url: '/platform/api/center/user/login',
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        data: JSON.stringify({
-            account: loginData.value.account,
-            password: loginData.value.password,
-            identity: captcha.value.identity,
-            captcha: loginData.value.captcha
-        })
-    }).then((res) => {
-        result = res.data
+    const result = await postRequest('/platform/api/center/user/login', {
+        account: loginData.value.account,
+        password: loginData.value.password,
+        identity: captcha.value.identity,
+        captcha: loginData.value.captcha
     })
     if (result.msg === 'OK') {
         switch (result.data.gender) {
@@ -266,24 +250,14 @@ const registerDataRule = {
 }
 
 const register = async () => {
-    let result
-    await axios({
-        url: '/platform/api/center/user/register',
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        data: JSON.stringify({
-            account: registerData.value.account,
-            password: registerData.value.password,
-            email: registerData.value.email,
-            nickname: registerData.value.nickname,
-            gender: registerData.value.gender,
-            identity: captcha.value.identity,
-            captcha: registerData.value.captcha
-        })
-    }).then((res) => {
-        result = res.data
+    const result = await postRequest('/platform/api/center/user/register', {
+        account: registerData.value.account,
+        password: registerData.value.password,
+        email: registerData.value.email,
+        nickname: registerData.value.nickname,
+        gender: registerData.value.gender,
+        identity: captcha.value.identity,
+        captcha: registerData.value.captcha
     })
     if (result.msg === 'OK') {
         ElMessage({

@@ -102,6 +102,7 @@ import {Edit, Female, Hide, Loading, Male, User} from "@element-plus/icons-vue";
 import axios from "axios";
 import {useRouter} from "vue-router";
 import {ElMessage} from "element-plus";
+import {getRequest, postRequest, putRequest} from "../../expand/request.js";
 
 const store = useStore()
 const router = useRouter()
@@ -120,16 +121,8 @@ const convertTo2DArray = (arr) => {
 const userInterfaceRecordData = ref()
 
 onMounted(async () => {
-    await axios({
-        url: '/platform/api/center/user_interface_record',
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'token': getCookie('token')
-        }
-    }).then((res) => {
-        userInterfaceRecordData.value = convertTo2DArray(res.data.data)
-    })
+    const response = await getRequest('/platform/api/center/user_interface_record', undefined)
+    userInterfaceRecordData.value = convertTo2DArray(response.data)
 })
 
 const uploadAvatar = async () => {
@@ -156,6 +149,10 @@ const uploadAvatar = async () => {
             },
             data: formData
         }).then((res) => {
+            if (res.data.msg === 'token已过期') {
+                ElMessage.error('token已过期')
+                router.push('/login')
+            }
             store.commit('setAvatar', {
                 avatar: res.data.data
             })
@@ -185,23 +182,15 @@ const openDialog = (model) => {
 }
 
 const getVerifyCode = async () => {
-    await axios({
-        url: '/platform/api/center/user/verify',
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'token': getCookie('token')
-        }
-    }).then((res) => {
-        if (res.data.msg === 'OK') {
-            ElMessage({
-                message: '验证码发送成功，请查看邮箱',
-                type: 'success',
-            })
-        } else {
-            ElMessage.error("系统出错，请联系管理员")
-        }
-    })
+    const response = await getRequest('/platform/api/center/user/verify', undefined)
+    if (response.msg === 'OK') {
+        ElMessage({
+            message: '验证码发送成功，请查看邮箱',
+            type: 'success',
+        })
+    } else {
+        ElMessage.error("系统出错，请联系管理员")
+    }
 }
 
 const editInfo = async () => {
@@ -213,32 +202,23 @@ const editInfo = async () => {
         ElMessage.error("请输入验证码")
         return
     }
-    await axios({
-        url: '/platform/api/center/user/info',
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json',
-            'token': getCookie('token')
-        },
-        data: JSON.stringify({
-            verifyCode: dialogData.value.info.verifyCode,
-            nickname: dialogData.value.info.nickname,
-            gender: dialogData.value.info.gender,
-            email: dialogData.value.info.email
-        })
-    }).then((res) => {
-        if (res.data.msg === 'OK') {
-            ElMessage({
-                message: '修改成功',
-                type: 'success',
-            })
-            dialogData.value.dialogVisible = false
-        } else if (res.data.msg === '验证码错误') {
-            ElMessage.error("验证码错误，请重试")
-        } else {
-            ElMessage.error("系统出错，请联系管理员")
-        }
+    const response = await putRequest('/platform/api/center/user/info', {
+        verifyCode: dialogData.value.info.verifyCode,
+        nickname: dialogData.value.info.nickname,
+        gender: dialogData.value.info.gender,
+        email: dialogData.value.info.email
     })
+    if (response.msg === 'OK') {
+        ElMessage({
+            message: '修改成功',
+            type: 'success',
+        })
+        dialogData.value.dialogVisible = false
+    } else if (response.msg === '验证码错误') {
+        ElMessage.error("验证码错误，请重试")
+    } else {
+        ElMessage.error("系统出错，请联系管理员")
+    }
 }
 
 const editPassword = async () => {
@@ -250,53 +230,36 @@ const editPassword = async () => {
         ElMessage.error("请输入验证码")
         return
     }
-    await axios({
-        url: '/platform/api/center/user/password',
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json',
-            'token': getCookie('token')
-        },
-        data: JSON.stringify({
-            verifyCode: dialogData.value.password.verifyCode,
-            newPassword: dialogData.value.password.newPassword
-        })
-    }).then((res) => {
-        if (res.data.msg === 'OK') {
-            ElMessage({
-                message: '修改成功',
-                type: 'success',
-            })
-            dialogData.value.dialogVisible = false
-            store.commit('resetUser')
-            router.push('/login')
-        } else if (res.data.msg === '验证码错误') {
-            ElMessage.error("验证码错误，请重试")
-        } else {
-            ElMessage.error("系统出错，请联系管理员")
-        }
+    const response = await putRequest('/platform/api/center/user/password', {
+        verifyCode: dialogData.value.password.verifyCode,
+        newPassword: dialogData.value.password.newPassword
     })
+    if (response.msg === 'OK') {
+        ElMessage({
+            message: '修改成功',
+            type: 'success',
+        })
+        dialogData.value.dialogVisible = false
+        store.commit('resetUser')
+        router.push('/login')
+    } else if (response.msg === '验证码错误') {
+        ElMessage.error("验证码错误，请重试")
+    } else {
+        ElMessage.error("系统出错，请联系管理员")
+    }
 }
 
 const resetKey = async () => {
-    await axios({
-        url: '/platform/api/center/user/resetKey',
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'token': getCookie('token')
-        }
-    }).then((res) => {
-        if (res.data.msg === 'OK') {
-            ElMessage({
-                message: '重置成功，请查看邮箱',
-                type: 'success',
-            })
-        } else {
-            ElMessage.error("系统出错，请联系管理员")
-        }
-        dialogData.value.dialogVisible = false
-    })
+    const response = await getRequest('/platform/api/center/user/resetKey', undefined)
+    if (response.msg === 'OK') {
+        ElMessage({
+            message: '重置成功，请查看邮箱',
+            type: 'success',
+        })
+    } else {
+        ElMessage.error("系统出错，请联系管理员")
+    }
+    dialogData.value.dialogVisible = false
 }
 </script>
 
