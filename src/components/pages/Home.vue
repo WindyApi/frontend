@@ -1,5 +1,37 @@
 <template>
     <div id="home">
+        <div style="display: flex; justify-content: space-between; align-items: center">
+            <div style="display: flex; justify-content: flex-start; align-items: center">
+                <el-input style="width: 20vw" placeholder="支持模糊搜索" v-model="keyword"></el-input>
+                <div style="width: 1vw"></div>
+                <el-button @click="search" type="primary" plain>查找接口</el-button>
+                <el-dialog
+                    v-model="searchDialog.visible"
+                    :title="searchDialog.title"
+                    width="50%"
+                >
+                    <el-scrollbar>
+                        <div v-if="searchDialog.list.length === 0" style="font-size: xx-large; text-align: center; margin: 8vh 0;">暂无结果</div>
+                        <el-scrollbar v-else>
+                            <el-table :data="searchDialog.list" border>
+                                <el-table-column prop="name" label="接口名称" width="240"></el-table-column>
+                                <el-table-column prop="describe" label="接口描述"></el-table-column>
+                                <el-table-column label="" width="90">
+                                    <template #default="scope">
+                                        <router-link :to="'interface_info/' + scope.row.interfaceId" style="color: #79bbff">查看详情</router-link>
+                                    </template>
+                                </el-table-column>
+                            </el-table>
+                        </el-scrollbar>
+                    </el-scrollbar>
+                </el-dialog>
+            </div>
+            <div style="display: flex; justify-content: flex-end; align-items: center">
+                <p style="margin-right: 12px;">共{{ total }}条</p>
+                <el-pagination layout="prev, pager, next" :page-size="10" :total="total" :current-page="currentPage" @current-change="handleCurrentChange" />
+            </div>
+        </div>
+        <el-divider></el-divider>
         <router-link :to="'/system/interface_info/' + item.id" v-for="item in interface_info_list" class="interface-list-item">
             <div>
                 <div style="font-size: larger">{{ item.name }}</div>
@@ -9,15 +41,27 @@
                 <div style="color: dodgerblue">查看详情</div>
             </div>
         </router-link>
-        <div style="display: flex; justify-content: flex-end; align-items: center; margin-top: 12px"><p style="margin-right: 12px;">共{{
-                total
-            }}条</p><el-pagination layout="prev, pager, next" :page-size="10" :total="total" :current-page="currentPage" @current-change="handleCurrentChange" /></div>
     </div>
 </template>
 
 <script setup>
 import {onMounted, ref} from 'vue'
 import {getRequest} from "../../expand/request.js";
+
+const keyword = ref('')
+
+const searchDialog = ref({
+    visible: false,
+    list: [],
+    title: ''
+})
+
+const search = async () => {
+    const result = await getRequest('/platform/api/center/interface/search', {keyword: keyword.value})
+    searchDialog.value.list = result.data
+    searchDialog.value.title = '已为您找到' + searchDialog.value.list.length+ '个接口'
+    searchDialog.value.visible = true
+}
 
 const total = ref(10)
 const currentPage = ref(1)
