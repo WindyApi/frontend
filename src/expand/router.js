@@ -11,6 +11,7 @@ import Order from "../components/pages/Order.vue";
 import {ElMessage} from "element-plus";
 import {isEqual} from "./utils.js";
 import OrderManage from "../components/pages/admin/OrderManage.vue";
+import SystemAnalysis from "../components/pages/admin/SystemAnalysis.vue";
 
 const routes = [
     {
@@ -49,6 +50,10 @@ const routes = [
             {
                 path: 'manage',
                 children: [
+                    {
+                        path: 'system',
+                        component: SystemAnalysis
+                    },
                     {
                         path: 'interface',
                         component: InterfaceManage
