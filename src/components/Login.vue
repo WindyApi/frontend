@@ -32,7 +32,39 @@
                     <el-form-item>
                         <el-button type="primary" @click="login" style="margin: 0 auto">登&nbsp;录</el-button>
                     </el-form-item>
-                    <div id="content-input-switch" @click="switchForm('register')">新用户？点击注册</div>
+                    <div class="content-input-switch" @click="switchForm('register')">新用户？点击注册</div>
+                    <div class="content-input-switch" @click="switchForm('forget')">忘记密码？点此重置</div>
+                </el-form>
+                <el-form
+                    label-position="top"
+                    :model="resetData"
+                    label-width="120px"
+                    style="width: 70%"
+                    scroll-into-view-options="true"
+                    size="large"
+                    id="el-form"
+                    v-if="type ==='forget'"
+                    :rules="resetDataRule"
+                >
+                    <div id="content-input-title">重置密码</div>
+                    <el-form-item label="账号" prop="account">
+                        <el-input v-model="resetData.account" />
+                    </el-form-item>
+                    <el-form-item label="验证码" prop="verifyCode">
+                        <div style="display: flex; width: 100%">
+                            <el-button type="primary" @click="getResetVerifyCode" style="margin: 0 auto">点&nbsp;击&nbsp;获&nbsp;取</el-button>
+                            <div style="flex: 1"></div>
+                            <el-input v-model="resetData.verifyCode" style="flex: 5"/>
+                        </div>
+                    </el-form-item>
+                    <el-form-item label="密码" prop="newPassword">
+                        <el-input v-model="resetData.newPassword" type="password" show-password/>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button type="primary" @click="reset" style="margin: 0 auto">重&nbsp;置</el-button>
+                    </el-form-item>
+                    <div class="content-input-switch" @click="switchForm('login')">想起密码？去登陆</div>
+                    <div class="content-input-switch" @click="switchForm('register')">新用户？点击注册</div>
                 </el-form>
                 <el-form
                     label-position="top"
@@ -88,7 +120,7 @@ import {ref, onMounted} from 'vue'
 import {useStore} from "vuex";
 import {setCookie} from "../expand/utils.js";
 import {useRouter} from "vue-router";
-import {getRequest, postRequest} from "../expand/request.js";
+import {getRequest, postRequest, putRequest} from "../expand/request.js";
 import {ElMessage} from "element-plus";
 
 //vuex对象
@@ -204,6 +236,57 @@ const login = async () => {
         ElMessage.error("系统出错")
         await getCaptcha()
         loginData.value.captcha = null
+    }
+}
+
+const resetData = ref({
+    visible: false,
+    account: null,
+    verifyCode: null,
+    newPassword: null
+})
+
+const resetDataRule = {
+    account: {
+        required: true,
+        message: '请输入账号',
+        trigger: 'blur'
+    },
+    verifyCode: {
+        required: true,
+        message: '请输入验证码',
+        trigger: 'blur'
+    },
+    newPassword: {
+        required: true,
+        message: '请输入新密码',
+        trigger: 'blur'
+    }
+}
+
+const getResetVerifyCode = async () => {
+    const params = {'account': resetData.value.account}
+    const result = await getRequest('/platform/api/center/user/forget', params)
+    console.log(result)
+    if (result.status === 0) {
+        ElMessage({
+            message: '验证码发送成功，请注意查收',
+            type: 'success'
+        })
+    } else {
+        ElMessage.error("账号不存在，请注册或检查邮箱是否正确")
+    }
+}
+
+const reset = async () => {
+    const result = await putRequest('/platform/api/center/user/forget', resetData.value)
+    console.log(result)
+    if (result.status === 0) {
+        ElMessage({
+            message: '重置成功',
+            type: 'success'
+        })
+        await switchForm('login')
     }
 }
 
@@ -336,11 +419,11 @@ header {
     font-size: large;
 }
 
-#content-input-switch {
+.content-input-switch {
     color: dodgerblue;
     position: relative;
     text-align: center;
-    margin: 0 auto;
+    margin: 12px auto;
 }
 
 footer {
