@@ -30,7 +30,8 @@
                         </div>
                     </el-form-item>
                     <el-form-item>
-                        <el-button type="primary" @click="login" style="margin: 0 auto">登&nbsp;录</el-button>
+                        <el-button type="primary" @click="login" style="margin: 0 auto">登&nbsp;录&nbsp;平&nbsp;台</el-button>
+                        <el-button type="primary" @click="login('guest')" style="margin: 0 auto">游&nbsp;客&nbsp;登&nbsp;录</el-button>
                     </el-form-item>
                     <div class="content-input-switch" @click="switchForm('register')">新用户？点击注册</div>
                     <div class="content-input-switch" @click="switchForm('forget')">忘记密码？点此重置</div>
@@ -185,13 +186,20 @@ const loginDataRule = {
     }
 }
 
-const login = async () => {
-    const result = await postRequest('/platform/api/center/user/login', {
-        account: loginData.value.account,
-        password: loginData.value.password,
-        identity: captcha.value.identity,
-        captcha: loginData.value.captcha
-    })
+const login = async (type) => {
+    let result
+    if (type === 'guest') {
+        result = await postRequest('/platform/api/center/user/login', {
+            account: 'guest'
+        })
+    } else {
+        result = await postRequest('/platform/api/center/user/login', {
+            account: loginData.value.account,
+            password: loginData.value.password,
+            identity: captcha.value.identity,
+            captcha: loginData.value.captcha
+        })
+    }
     if (result.msg === 'OK') {
         switch (result.data.gender) {
             case 0:

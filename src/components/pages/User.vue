@@ -56,8 +56,10 @@
                     </template>
                 </el-dialog>
                 <el-divider />
-                <div style="font-weight: 600; display: flex; align-items: center">个性签名<el-icon><Edit /></el-icon></div>
-                <div style="margin-top: 12px;">生活就像一本书，你要翻过去才能知道结局</div>
+                <div style="font-weight: 600; display: flex; align-items: center" v-if="store.state.user.nickname !== '游客账号'">个性签名<el-icon><Edit /></el-icon></div>
+                <div style="font-weight: 600; display: flex; align-items: center" v-else>游客账号说明</div>
+                <div style="margin-top: 12px;" v-if="store.state.user.nickname !== '游客账号'">生活就像一本书，你要翻过去才能知道结局</div>
+                <div style="margin-top: 12px;" v-else>AK:GUEST_ACCESS_KEY<br>SK:GUEST_SECRET_KEY<br>每日每接口免费体验20次调用</div>
             </div>
         </div>
         <el-scrollbar style="flex: 5">
@@ -84,7 +86,7 @@
                                     <div style="font-size: 16px" v-if="item.updateTime === null">暂无调用记录</div>
                                     <div style="font-size: 16px" v-else>{{ tsToDate(item.updateTime) }}</div>
                                 </div>
-                                <el-button plain style="position: relative; right: 31px" @click="router.push('/system/interface_info/' + item.interfaceId)">续订</el-button>
+                                <el-button plain style="position: relative; right: 31px" @click="router.push('/system/interface_info/' + item.interfaceId)" v-if="store.state.user.role !== 'guest'">续订</el-button>
                             </div>
                         </div>
                     </div>
@@ -126,6 +128,10 @@ onMounted(async () => {
 })
 
 const uploadAvatar = async () => {
+    if (store.state.user.role === 'guest') {
+        ElMessage.error("无权限访问");
+        return
+    }
     const fileInput = document.createElement('input');
     fileInput.type = 'file';
     fileInput.accept = '.jpg, .png';
@@ -177,6 +183,10 @@ const dialogData = ref({
 })
 
 const openDialog = (model) => {
+    if (store.state.user.role === 'guest') {
+        ElMessage.error("无权限访问");
+        return
+    }
     dialogData.value.title = model
     dialogData.value.dialogVisible = true
 }
