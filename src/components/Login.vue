@@ -213,7 +213,7 @@ const login = async (type) => {
                 break
         }
         if (result.data.avatar === null || result.data.avatar === '') {
-            result.data.avatar = "/images/default-avatar.jpg"
+            result.data.avatar = "https://cdn.jsdelivr.net/gh/whiteleaf03/imgur/WindyApi/default-avatar.jpg"
         }
         store.commit('setUser', {
             'nickname': result.data.nickname,
@@ -391,7 +391,7 @@ header {
 }
 
 #content-image {
-    background-image: url('/images/login-bg.jpg');
+    background-image: url('https://cdn.jsdelivr.net/gh/whiteleaf03/imgur/WindyApi/login-bg.jpg');
     flex: 5;
     height: 100%;
     background-size: cover;
