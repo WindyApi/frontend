@@ -65,7 +65,74 @@
         <el-scrollbar style="flex: 5">
             <div style="display: flex; flex-direction: column">
                 <div id="interface-card">
-                    <p style="color: dodgerblue; width: 99%; font-size: x-large; text-align: left">已订阅接口</p>
+                    <div style="display: flex; justify-content: space-between; width: 100%">
+                        <p style="color: dodgerblue; width: 99%; font-size: x-large; text-align: left">已订阅接口</p>
+                        <el-button type="primary" plain @click="openInvokeDialog">在线调用</el-button>
+                        <el-dialog
+                            v-model="invokeDialog.dialogVisible"
+                            title="在线调用"
+                            width="30%"
+                        >
+                            <div class="invokeDialog-line">
+                                <p>调用接口</p>
+                                <el-select v-model="invokeDialog.interfaceId" placeholder="请选择接口" style="flex: 3">
+                                    <el-option
+                                        v-for="item in invokeDialog.interfaceList"
+                                        :key="item.interfaceId"
+                                        :label="item.interfaceName"
+                                        :value="item.interfaceId"
+                                    />
+                                </el-select>
+                            </div>
+                            <el-divider></el-divider>
+                            <div style="display: flex; justify-content: space-between">
+                                <p>请求参数</p>
+                                <el-button @click="addParam" type="primary">新增参数</el-button>
+                            </div>
+                            <el-divider></el-divider>
+                            <el-scrollbar height="30vh">
+                                <el-form
+                                    ref="formRef"
+                                    label-width="60px"
+                                    class="demo-dynamic"
+                                    label-position="left"
+                                >
+                                    <el-form-item
+                                        v-for="(param, index) in invokeDialog.paramList"
+                                        :key="param.key"
+                                        :label="'参数' + index"
+                                        :prop="'domains.' + index + '.value'"
+                                    >
+                                        <div style="display: flex; width: 100%">
+                                            <div style="flex: 3; margin-right: 24px">
+                                                <p>参数名</p>
+                                                <el-input v-model="param.name"/>
+                                                <br>
+                                                <p>参数值</p>
+                                                <el-input v-model="param.value"/>
+                                            </div>
+                                            <div style="flex: 1">
+                                                <p>&nbsp;</p>
+                                                <el-button @click.prevent="removeParam(param)" type="danger">删除参数</el-button>
+                                            </div>
+                                        </div>
+                                        <el-divider></el-divider>
+                                    </el-form-item>
+                                </el-form>
+                            </el-scrollbar>
+                            <template #footer>
+                                <span class="dialog-footer">
+                                    <el-button @click="invokeApi" type="success">调用</el-button>
+                                </span>
+                            </template>
+                        </el-dialog>
+                        <el-dialog
+                            v-model="invokeDialog.resultVisible"
+                            title="调用结果"
+                        >
+                            <div style="user-select: text; white-space: pre">{{ formatJSON(invokeDialog.result) }}</div>
+                        </el-dialog>
+                    </div>
                     <el-divider/>
                     <div class="interface-card-line" v-for="line in userInterfaceRecordData">
                         <div class="box" v-for="item in line">
@@ -99,7 +166,7 @@
 <script setup>
 import {onMounted, ref} from 'vue';
 import {useStore} from "vuex";
-import {getCookie, tsToDate} from "../../expand/utils.js";
+import {formatJSON, getCookie, tsToDate} from "../../expand/utils.js";
 import {Edit, Female, Hide, Loading, Male, User} from "@element-plus/icons-vue";
 import axios from "axios";
 import {useRouter} from "vue-router";
@@ -271,6 +338,55 @@ const resetKey = async () => {
     }
     dialogData.value.dialogVisible = false
 }
+
+const invokeDialog = ref({
+    dialogVisible: false,
+    resultVisible: false,
+    interfaceList: [],
+    interfaceId: null,
+    paramList: [],
+    result: {}
+})
+
+const openInvokeDialog = () => {
+    let interface_list = []
+    for (let i in userInterfaceRecordData.value) {
+        for (let j in userInterfaceRecordData.value[i]) {
+            interface_list.push(userInterfaceRecordData.value[i][j])
+        }
+    }
+    invokeDialog.value.dialogVisible = true
+    invokeDialog.value.interfaceList = interface_list
+    invokeDialog.value.paramList = []
+}
+
+const removeParam = (item) => {
+    const index = invokeDialog.value.paramList.indexOf(item)
+    if (index !== -1) {
+        invokeDialog.value.paramList.splice(index, 1)
+    }
+}
+
+const addParam = () => {
+    invokeDialog.value.paramList.push({
+        name: '',
+        value: null
+    })
+}
+
+const invokeApi = async () => {
+    let paramsJson = {}
+    let data = {}
+    for (let index in invokeDialog.value.paramList) {
+        paramsJson[invokeDialog.value.paramList[index].name] = invokeDialog.value.paramList[index].value
+    }
+    data.paramsJson = paramsJson
+    data.interfaceId = invokeDialog.value.interfaceId
+    let result = await postRequest('/platform/api/center/user/invoke', data)
+    invokeDialog.value.dialogVisible = false
+    invokeDialog.value.resultVisible = true
+    invokeDialog.value.result = result
+}
 </script>
 
 <style scoped>
@@ -363,5 +479,15 @@ const resetKey = async () => {
 .dialog-tips {
     font-size: larger;
     margin: 12px 0;
+}
+
+.invokeDialog-line {
+    display: flex;
+    align-items: center;
+}
+
+.invokeDialog-line p {
+    flex: 1;
+    margin-right: 12px;
 }
 </style>
