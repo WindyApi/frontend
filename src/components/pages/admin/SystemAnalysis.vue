@@ -278,7 +278,7 @@ const getSystemInfo = async () => {
     interfaceNodeTimeList.reverse()
 
     drawCpuPieChart(interfaceNodeCpuUsageList[0], 'chart_pie_cpu_interface', '接口中心CPU负载(%)')
-    drawMemoryPieChart(interfaceNodeMemoryUsedList[0], 'chart_pie_memory_interface', '接口中心内存用量(%)', 512)
+    drawMemoryPieChart(interfaceNodeMemoryUsedList[0], 'chart_pie_memory_interface', '接口中心内存用量(%) [MAX]512MB', 512)
     drawCpuLineChart(interfaceNodeTimeList, interfaceNodeCpuUsageList, 'chart_line_cpu_interface', '接口中心CPU负载(%)')
     drawMemoryLineChart(interfaceNodeTimeList, interfaceNodeMemoryUsedList, 'chart_line_memory_interface', '接口中心内存用量(MB)', 520)
 
@@ -288,7 +288,7 @@ const getSystemInfo = async () => {
     backendNodeTimeList.reverse()
 
     drawCpuPieChart(backendNodeCpuUsageList[0], 'chart_pie_cpu_backend', '用户中心CPU负载(%)')
-    drawMemoryPieChart(backendNodeMemoryUsedList[0], 'chart_pie_memory_backend', '用户中心内存用量(%)', 512)
+    drawMemoryPieChart(backendNodeMemoryUsedList[0], 'chart_pie_memory_backend', '用户中心内存用量(%) [MAX]512MB', 512)
     drawCpuLineChart(backendNodeTimeList, backendNodeCpuUsageList, 'chart_line_cpu_backend', '用户中心CPU负载(%)')
     drawMemoryLineChart(backendNodeTimeList, backendNodeMemoryUsedList, 'chart_line_memory_backend', '用户中心内存用量(MB)', 520)
 
@@ -298,7 +298,7 @@ const getSystemInfo = async () => {
     gatewayNodeTimeList.reverse()
 
     drawCpuPieChart(gatewayNodeCpuUsageList[0], 'chart_pie_cpu_gateway', '网关CPU负载(%)')
-    drawMemoryPieChart(gatewayNodeMemoryUsedList[0], 'chart_pie_memory_gateway', '网关内存用量(%)', 256)
+    drawMemoryPieChart(gatewayNodeMemoryUsedList[0], 'chart_pie_memory_gateway', '网关内存用量(%) [MAX]512MB', 256)
     drawCpuLineChart(gatewayNodeTimeList, gatewayNodeCpuUsageList, 'chart_line_cpu_gateway', '网关CPU负载(%)')
     drawMemoryLineChart(gatewayNodeTimeList, gatewayNodeMemoryUsedList, 'chart_line_memory_gateway', '网关内存用量(MB)', 260)
 }
