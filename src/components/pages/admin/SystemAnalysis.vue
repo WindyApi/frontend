@@ -232,55 +232,56 @@ const drawMemoryLineChart = (xData, yData, chartDom, title, max) => {
     chart.setOption(options);
 }
 
+const roundUpToNearestTen = (number) => {
+    let str = number.toString();
+    let lastDigit = parseInt(str[str.length - 1], 10);
+    let roundedDigit = Math.ceil(lastDigit / 10) * 10;
+    return parseInt(str.slice(0, -1) + roundedDigit, 10) / 10;
+}
+
 const getSystemInfo = async () => {
     const data = (await getRequest('/platform/api/center/system', null)).data
     drawLineChart(getTimeList(5), data.recentRecordVO.recentQPS.reverse(), 'chart_qps', '接口调用次数(次/分钟)')
     drawLineChart(getTimeList(5), data.recentRecordVO.recentAvgUseTime.reverse(), 'chart_avgUseTime', '调用平均耗时(毫秒/次)')
     drawLineChart(getTimeList(5), data.recentRecordVO.recentAcceptRate.reverse(), 'chart_acceptRate', '调用通过率(%)')
 
-    const ONE_MB = 1024 * 1024
-
     // 接口中心
     let interfaceNodeMemoryUsedList = []
+    let interfaceNodeMemoryLimit
     let interfaceNodeCpuUsageList = []
     let interfaceNodeTimeList = []
 
     // 用户中心
     let backendNodeMemoryUsedList = []
+    let backendNodeMemoryLimit
     let backendNodeCpuUsageList = []
     let backendNodeTimeList = []
 
     // 网关
     let gatewayNodeMemoryUsedList = []
+    let gatewayNodeMemoryLimit
     let gatewayNodeCpuUsageList = []
     let gatewayNodeTimeList = []
 
     for (let index in data.nodeInfoVOList) {
-        let interfaceNodeInfoObj = JSON.parse(data.nodeInfoVOList[index])[0]
-        interfaceNodeMemoryUsedList.push((interfaceNodeInfoObj.memoryUsed / ONE_MB).toFixed(2))
-        interfaceNodeCpuUsageList.push((interfaceNodeInfoObj.cpuUsage * 100).toFixed(2))
-        interfaceNodeTimeList.push(interfaceNodeInfoObj.date)
-
         let backendNodeInfoObj = JSON.parse(data.nodeInfoVOList[index])[0]
-        backendNodeMemoryUsedList.push((backendNodeInfoObj.memoryUsed / ONE_MB).toFixed(2))
-        backendNodeCpuUsageList.push((backendNodeInfoObj.cpuUsage * 100).toFixed(2))
+        backendNodeMemoryLimit = backendNodeInfoObj.memoryLimit
+        backendNodeMemoryUsedList.push(backendNodeInfoObj.memoryUsed)
+        backendNodeCpuUsageList.push(backendNodeInfoObj.cpuUsage)
         backendNodeTimeList.push(backendNodeInfoObj.date)
 
-        let gatewayNodeInfoObj = JSON.parse(data.nodeInfoVOList[index])[0]
-        gatewayNodeMemoryUsedList.push((gatewayNodeInfoObj.memoryUsed / ONE_MB).toFixed(2))
-        gatewayNodeCpuUsageList.push((gatewayNodeInfoObj.cpuUsage * 100).toFixed(2))
+        let gatewayNodeInfoObj = JSON.parse(data.nodeInfoVOList[index])[1]
+        gatewayNodeMemoryLimit = gatewayNodeInfoObj.memoryLimit
+        gatewayNodeMemoryUsedList.push(gatewayNodeInfoObj.memoryUsed)
+        gatewayNodeCpuUsageList.push(gatewayNodeInfoObj.cpuUsage)
         gatewayNodeTimeList.push(gatewayNodeInfoObj.date)
+
+        let interfaceNodeInfoObj = JSON.parse(data.nodeInfoVOList[index])[2]
+        interfaceNodeMemoryLimit = interfaceNodeInfoObj.memoryLimit
+        interfaceNodeMemoryUsedList.push(interfaceNodeInfoObj.memoryUsed)
+        interfaceNodeCpuUsageList.push(interfaceNodeInfoObj.cpuUsage)
+        interfaceNodeTimeList.push(interfaceNodeInfoObj.date)
     }
-
-    // 接口中心
-    interfaceNodeCpuUsageList.reverse()
-    interfaceNodeMemoryUsedList.reverse()
-    interfaceNodeTimeList.reverse()
-
-    drawCpuPieChart(interfaceNodeCpuUsageList[0], 'chart_pie_cpu_interface', '接口中心CPU负载(%)')
-    drawMemoryPieChart(interfaceNodeMemoryUsedList[0], 'chart_pie_memory_interface', '接口中心内存用量(%) [MAX]512MB', 512)
-    drawCpuLineChart(interfaceNodeTimeList, interfaceNodeCpuUsageList, 'chart_line_cpu_interface', '接口中心CPU负载(%)')
-    drawMemoryLineChart(interfaceNodeTimeList, interfaceNodeMemoryUsedList, 'chart_line_memory_interface', '接口中心内存用量(MB)', 520)
 
     // 用户中心
     backendNodeCpuUsageList.reverse()
@@ -288,9 +289,9 @@ const getSystemInfo = async () => {
     backendNodeTimeList.reverse()
 
     drawCpuPieChart(backendNodeCpuUsageList[0], 'chart_pie_cpu_backend', '用户中心CPU负载(%)')
-    drawMemoryPieChart(backendNodeMemoryUsedList[0], 'chart_pie_memory_backend', '用户中心内存用量(%) [MAX]512MB', 512)
+    drawMemoryPieChart(backendNodeMemoryUsedList[0], 'chart_pie_memory_backend', '用户中心内存用量(%) [MAX]' + backendNodeMemoryLimit + 'MB', backendNodeMemoryLimit)
     drawCpuLineChart(backendNodeTimeList, backendNodeCpuUsageList, 'chart_line_cpu_backend', '用户中心CPU负载(%)')
-    drawMemoryLineChart(backendNodeTimeList, backendNodeMemoryUsedList, 'chart_line_memory_backend', '用户中心内存用量(MB)', 520)
+    drawMemoryLineChart(backendNodeTimeList, backendNodeMemoryUsedList, 'chart_line_memory_backend', '用户中心内存用量(MB)', roundUpToNearestTen(backendNodeMemoryLimit))
 
     // 网关
     gatewayNodeCpuUsageList.reverse()
@@ -298,9 +299,19 @@ const getSystemInfo = async () => {
     gatewayNodeTimeList.reverse()
 
     drawCpuPieChart(gatewayNodeCpuUsageList[0], 'chart_pie_cpu_gateway', '网关CPU负载(%)')
-    drawMemoryPieChart(gatewayNodeMemoryUsedList[0], 'chart_pie_memory_gateway', '网关内存用量(%) [MAX]512MB', 256)
+    drawMemoryPieChart(gatewayNodeMemoryUsedList[0], 'chart_pie_memory_gateway', '网关内存用量(%) [MAX]' + gatewayNodeMemoryLimit + 'MB', gatewayNodeMemoryLimit)
     drawCpuLineChart(gatewayNodeTimeList, gatewayNodeCpuUsageList, 'chart_line_cpu_gateway', '网关CPU负载(%)')
-    drawMemoryLineChart(gatewayNodeTimeList, gatewayNodeMemoryUsedList, 'chart_line_memory_gateway', '网关内存用量(MB)', 260)
+    drawMemoryLineChart(gatewayNodeTimeList, gatewayNodeMemoryUsedList, 'chart_line_memory_gateway', '网关内存用量(MB)', roundUpToNearestTen(gatewayNodeMemoryLimit))
+
+    // 接口中心
+    interfaceNodeCpuUsageList.reverse()
+    interfaceNodeMemoryUsedList.reverse()
+    interfaceNodeTimeList.reverse()
+
+    drawCpuPieChart(interfaceNodeCpuUsageList[0], 'chart_pie_cpu_interface', '接口中心CPU负载(%)')
+    drawMemoryPieChart(interfaceNodeMemoryUsedList[0], 'chart_pie_memory_interface', '接口中心内存用量(%) [MAX]' + interfaceNodeMemoryLimit + 'MB', interfaceNodeMemoryLimit)
+    drawCpuLineChart(interfaceNodeTimeList, interfaceNodeCpuUsageList, 'chart_line_cpu_interface', '接口中心CPU负载(%)')
+    drawMemoryLineChart(interfaceNodeTimeList, interfaceNodeMemoryUsedList, 'chart_line_memory_interface', '接口中心内存用量(MB)', roundUpToNearestTen(interfaceNodeMemoryLimit))
 }
 
 let timer
